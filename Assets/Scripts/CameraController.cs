@@ -2,22 +2,22 @@ using Cinemachine;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class CameraController : Singleton<CameraController>
 {
     [SerializeField] CinemachineVirtualCamera zoomCamera;
 
     [SerializeField] float zoomSpeed;
+    private Vector3 originalPosition;
     private Vector3 targetPosition;
     private float originalSize;
     private float targetSize;
 
     private Coroutine zoomCoroutine;
 
-    private float minPositionX = -5.4f;
-    private float minPositionY = -3f;
-    private float maxPositionX = 5.4f;
-    private float maxPositionY = 3f;
+    private Vector2 minBounds;
+    private Vector2 maxBounds;
 
     void Start()
     {
@@ -25,13 +25,15 @@ public class CameraController : Singleton<CameraController>
         {
             Debug.LogError("Virtual Camera is not assigned");
         }
-
+        
+        //SET original camera transform
+        originalPosition = transform.position;
         originalSize = zoomCamera.m_Lens.OrthographicSize;
     }
 
     public void ZoomCamera(Vector3 _targetPosition, float _targetSize)
     {
-        targetPosition = _targetPosition;
+        targetPosition = ClampPosition(_targetPosition);
         targetSize = _targetSize;
 
         zoomCoroutine = StartCoroutine(Zoom());
@@ -39,7 +41,7 @@ public class CameraController : Singleton<CameraController>
 
     public void ResetZoom()
     {
-        targetPosition = zoomCamera.transform.position;
+        targetPosition = originalPosition;
         targetSize = originalSize;
 
         if(zoomCoroutine != null)
@@ -54,6 +56,7 @@ public class CameraController : Singleton<CameraController>
     {
         Transform cameraTransform = zoomCamera.transform;
 
+        //position move until target
         while (Vector3.Distance(cameraTransform.position, targetPosition) > 0.1f || Mathf.Abs(zoomCamera.m_Lens.OrthographicSize - targetSize) > 0.1f)
         {
             cameraTransform.position = Vector3.Lerp(cameraTransform.position, targetPosition, zoomSpeed * Time.deltaTime);
@@ -64,6 +67,29 @@ public class CameraController : Singleton<CameraController>
 
         cameraTransform.position = targetPosition;
         zoomCamera.m_Lens.OrthographicSize = targetSize;
+    }
+
+    private Vector3 ClampPosition(Vector3 position)
+    {
+        SetClampBounds();
+
+        float clampedX = Mathf.Clamp(position.x, minBounds.x, maxBounds.x);
+        float clampedY = Mathf.Clamp(position.y, minBounds.y, maxBounds.y);
+
+        return new Vector3(clampedX, clampedY, position.z);
+    }
+
+    private void SetClampBounds() // SET by SceneIndex
+    {
+        Scene currentScene = SceneManager.GetActiveScene();
+
+        switch(currentScene.buildIndex)
+        {
+            case 0: //MainScene
+                minBounds = new Vector2(-5.4f, -3f);
+                maxBounds = new Vector2(5.4f, 3f);
+                break;
+        }
     }
     
 }
