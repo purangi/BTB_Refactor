@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CameraController : MonoBehaviour
+public class CameraController : Singleton<CameraController>
 {
     [SerializeField] CinemachineVirtualCamera zoomCamera;
 
@@ -13,6 +13,11 @@ public class CameraController : MonoBehaviour
     private float targetSize;
 
     private Coroutine zoomCoroutine;
+
+    private float minPositionX = -5.4f;
+    private float minPositionY = -3f;
+    private float maxPositionX = 5.4f;
+    private float maxPositionY = 3f;
 
     void Start()
     {

@@ -17,7 +17,10 @@ public class MainMapSprites : SpriteInteraction
 
     protected override void ClickMethod()
     {
-        
+        Vector3 targetPosition = new Vector3(transform.position.x, transform.position.y, -1);
+        float targetSize = 2f;
+
+        CameraController.Instance.ZoomCamera(targetPosition, targetSize);
     }
 
     protected override void EnterMethod()
