@@ -10,6 +10,8 @@ public class MainMapSprites : SpriteInteraction
     [SerializeField] Sprite lineSprite;
     [SerializeField] Sprite exitSprite;
 
+    [SerializeField] int spriteIndex;
+
     private void Start()
     {
         basicSprite = spriteRenderer.sprite;
@@ -20,7 +22,7 @@ public class MainMapSprites : SpriteInteraction
         Vector3 targetPosition = new Vector3(transform.position.x, transform.position.y, -1);
         float targetSize = 2f;
 
-        CameraController.Instance.ZoomCamera(targetPosition, targetSize);
+        CameraController.Instance.ZoomCamera(targetPosition, targetSize, spriteIndex);
     }
 
     protected override void EnterMethod()

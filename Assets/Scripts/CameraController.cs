@@ -19,6 +19,11 @@ public class CameraController : Singleton<CameraController>
     private Vector2 minBounds;
     private Vector2 maxBounds;
 
+    private bool isZoomed = false;
+    public bool IsZoomed {  get { return isZoomed; } }
+
+    private int itemIndex = -1;
+
     void Start()
     {
         if(zoomCamera == null)
@@ -31,18 +36,30 @@ public class CameraController : Singleton<CameraController>
         originalSize = zoomCamera.m_Lens.OrthographicSize;
     }
 
-    public void ZoomCamera(Vector3 _targetPosition, float _targetSize)
+    public void ZoomCamera(Vector3 _targetPosition, float _targetSize, int _index)
     {
+        isZoomed = true;
+
+        if(_index == itemIndex)
+        {
+            ResetZoom();
+            return;
+        }
+
         targetPosition = ClampPosition(_targetPosition);
         targetSize = _targetSize;
+        itemIndex = _index;
 
         zoomCoroutine = StartCoroutine(Zoom());
     }
 
     public void ResetZoom()
     {
+        isZoomed = false;
+
         targetPosition = originalPosition;
         targetSize = originalSize;
+        itemIndex = -1;
 
         if(zoomCoroutine != null)
         {
@@ -69,7 +86,7 @@ public class CameraController : Singleton<CameraController>
         zoomCamera.m_Lens.OrthographicSize = targetSize;
     }
 
-    private Vector3 ClampPosition(Vector3 position)
+    private Vector3 ClampPosition(Vector3 position) //Limit the Position
     {
         SetClampBounds();
 
