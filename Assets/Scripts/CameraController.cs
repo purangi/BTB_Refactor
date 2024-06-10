@@ -1,6 +1,5 @@
 using Cinemachine;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -20,17 +19,17 @@ public class CameraController : Singleton<CameraController>
     private Vector2 maxBounds;
 
     private bool isZoomed = false;
-    public bool IsZoomed {  get { return isZoomed; } }
+    public bool IsZoomed { get { return isZoomed; } }
 
     private int itemIndex = -1;
 
     void Start()
     {
-        if(zoomCamera == null)
+        if (zoomCamera == null)
         {
             Debug.LogError("Virtual Camera is not assigned");
         }
-        
+
         //SET original camera transform
         originalPosition = transform.position;
         originalSize = zoomCamera.m_Lens.OrthographicSize;
@@ -40,7 +39,7 @@ public class CameraController : Singleton<CameraController>
     {
         isZoomed = true;
 
-        if(_index == itemIndex)
+        if (_index == itemIndex)
         {
             ResetZoom();
             return;
@@ -61,7 +60,7 @@ public class CameraController : Singleton<CameraController>
         targetSize = originalSize;
         itemIndex = -1;
 
-        if(zoomCoroutine != null)
+        if (zoomCoroutine != null)
         {
             StopCoroutine(zoomCoroutine);
         }
@@ -100,7 +99,7 @@ public class CameraController : Singleton<CameraController>
     {
         Scene currentScene = SceneManager.GetActiveScene();
 
-        switch(currentScene.buildIndex)
+        switch (currentScene.buildIndex)
         {
             case 0: //MainScene
                 minBounds = new Vector2(-5.4f, -3f);
@@ -108,5 +107,5 @@ public class CameraController : Singleton<CameraController>
                 break;
         }
     }
-    
+
 }
